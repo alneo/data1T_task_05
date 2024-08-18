@@ -1,0 +1,30 @@
+version: '3.9'
+services:
+  db_postgres:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    container_name: db_postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: passwordPG
+      POSTGRES_USER: userPG
+      POSTGRES_DB: databasePG
+    volumes:
+      - ./databases/create_table_pg.sql:/docker-entrypoint-initdb.d/create_table_pg.sql
+
+  db_clickhouse:
+    image: yandex/clickhouse-server
+    container_name: clickhouse-server
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    ulimits:
+      nofile: 262144
+    environment:
+      CLICKHOUSE_DB: databaseCH
+      CLICKHOUSE_USER: userCH
+      CLICKHOUSE_PASSWORD: passwordCH
+    volumes:
+     - ./databases/create_table_ch.sql:/docker-entrypoint-initdb.d/create_table_ch.sql
